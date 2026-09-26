@@ -125,6 +125,14 @@ func (a *TaskAdaptor) ValidateRequestAndSetAction(c *gin.Context, info *relaycom
 	if err != nil {
 		return service.TaskErrorWrapper(err, "get_task_request_failed", http.StatusBadRequest)
 	}
+	if route, ok, routeErr := resolveMediaRoute(info, req); ok {
+		if routeErr != nil {
+			return service.TaskErrorWrapperLocal(routeErr, "invalid_request", http.StatusBadRequest)
+		}
+		info.Action = route.Action
+		c.Set("task_request", req)
+		return nil
+	}
 	route, err := resolveSeedanceRoute(info, req)
 	if err != nil {
 		return service.TaskErrorWrapperLocal(err, "invalid_request", http.StatusBadRequest)
@@ -138,6 +146,9 @@ func (a *TaskAdaptor) EstimateBilling(c *gin.Context, info *relaycommon.RelayInf
 	req, err := falTaskRequestWithTopLevelMetadata(c)
 	if err != nil {
 		return nil
+	}
+	if route, ok, routeErr := resolveMediaRoute(info, req); ok && routeErr == nil {
+		return mediaRatios(req, route)
 	}
 
 	ratios := map[string]float64{}
@@ -163,6 +174,9 @@ func (a *TaskAdaptor) EstimateBilling(c *gin.Context, info *relaycommon.RelayInf
 
 func (a *TaskAdaptor) BuildRequestURL(info *relaycommon.RelayInfo) (string, error) {
 	endpoint := seedanceEndpointForInfo(info)
+	if isFalMediaEndpoint(info.UpstreamModelName) {
+		endpoint = info.UpstreamModelName
+	}
 	if endpoint == "" {
 		return "", fmt.Errorf("unsupported fal seedance action: %s", info.Action)
 	}
@@ -180,6 +194,23 @@ func (a *TaskAdaptor) BuildRequestBody(c *gin.Context, info *relaycommon.RelayIn
 	req, err := falTaskRequestWithTopLevelMetadata(c)
 	if err != nil {
 		return nil, err
+	}
+	if route, ok, routeErr := resolveMediaRoute(info, req); ok {
+		if routeErr != nil {
+			return nil, routeErr
+		}
+		info.Action = route.Action
+		info.UpstreamModelName = route.Endpoint
+		c.Set("task_request", req)
+		body, err := buildMediaRequestBody(req, route)
+		if err != nil {
+			return nil, err
+		}
+		data, err := common.Marshal(body)
+		if err != nil {
+			return nil, err
+		}
+		return bytes.NewReader(data), nil
 	}
 	route, err := resolveSeedanceRoute(info, req)
 	if err != nil {
@@ -219,6 +250,9 @@ func (a *TaskAdaptor) DoResponse(c *gin.Context, resp *http.Response, info *rela
 	}
 
 	endpoint := seedanceEndpointForInfo(info)
+	if isFalMediaEndpoint(info.UpstreamModelName) {
+		endpoint = info.UpstreamModelName
+	}
 	taskData, err = common.Marshal(map[string]any{
 		"endpoint": endpoint,
 		"action":   info.Action,
@@ -349,7 +383,7 @@ func (a *TaskAdaptor) ParseTaskResult(respBody []byte) (*relaycommon.TaskInfo, e
 }
 
 func (a *TaskAdaptor) GetModelList() []string {
-	return seedanceModelList
+	return append(append([]string{}, seedanceModelList...), falMediaModels()...)
 }
 
 func (a *TaskAdaptor) GetChannelName() string {
@@ -806,7 +840,7 @@ func decodeFalQueueTaskID(taskID string) (endpoint string, requestID string) {
 	if len(parts) != 2 {
 		return "", taskID
 	}
-	if !isSeedanceEndpoint(parts[0]) {
+	if !isSeedanceEndpoint(parts[0]) && !isFalMediaEndpoint(parts[0]) {
 		return "", taskID
 	}
 	return parts[0], parts[1]
