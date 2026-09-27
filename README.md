@@ -2,7 +2,7 @@
 
 # dramafoundry-gateway
 
-**The model gateway that ships inside [DramaFoundry](https://github.com/dramaclaw/dramaclaw)**
+**The model gateway that ships inside [DramaFoundry](https://github.com/ffrappo/dramafoundry)**
 
 [简体中文](./README.zh_CN.md) | English
 
@@ -30,12 +30,12 @@ request or response shapes.
 ## Use it with DramaFoundry (the normal way)
 
 You do not install this gateway separately. DramaFoundry CE's
-[`docker-compose.yml`](https://github.com/dramaclaw/dramaclaw/blob/main/docker-compose.yml)
+[`docker-compose.yml`](https://github.com/ffrappo/dramafoundry/blob/main/docker-compose.yml)
 starts it as the `newapi` service next to the DramaFoundry API and web UI:
 
 ```bash
-git clone https://github.com/dramaclaw/dramaclaw.git
-cd dramaclaw
+git clone https://github.com/ffrappo/dramafoundry.git
+cd dramafoundry
 cp .env.example .env
 docker compose up -d          # api + newapi (this gateway) + web
 ```
@@ -51,8 +51,8 @@ Then open <http://localhost:8080> → **Settings → Model Config** and pick a m
 The gateway's SQLite database lives in the Compose `newapi-data` volume and is
 shared with the DramaFoundry API, which provisions the admin account, runtime token,
 channels and model mappings for you. Pin the gateway version with
-`DRAMACLAW_GATEWAY_VERSION` in `.env`. Full walkthrough:
-[Configuring Models](https://github.com/dramaclaw/dramaclaw/blob/main/docs/en/getting-started/configuring-models.md).
+`DRAMAFOUNDRY_GATEWAY_VERSION` in `.env`. Full walkthrough:
+[Configuring Models](https://github.com/ffrappo/dramafoundry/blob/main/docs/en/getting-started/configuring-models.md).
 
 ## Docker image
 
