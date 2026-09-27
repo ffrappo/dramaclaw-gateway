@@ -31,7 +31,7 @@ capabilities. This table records human verification and known gaps.
 - **Coverage needs audit**: inherited code may run, but all claimed scenarios
   have not been proven against the current contract.
 - **Verified model**: requires official docs, conversion tests, and a real
-  DramaClaw CE end-to-end result.
+  DramaFoundry CE end-to-end result.
 
 ## Adding a Record
 

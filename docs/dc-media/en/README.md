@@ -1,7 +1,7 @@
 # DC-Media Development Documentation
 
 This directory is for contributors building provider and model adapters for
-`dramaclaw-gateway`. The canonical English public request and response contract
+`dramafoundry-gateway`. The canonical English public request and response contract
 is [`dc-media-protocol.en.md`](../../../dc-media-protocol.en.md), paired with the
 Chinese [`dc-media-protocol.md`](../../../dc-media-protocol.md). These documents
 explain how to implement and test that contract.
@@ -34,7 +34,7 @@ explain how to implement and test that contract.
 
 ## Ownership Boundaries
 
-- The DramaClaw model catalog controls user-visible modes and limits.
+- The DramaFoundry model catalog controls user-visible modes and limits.
 - The DC-Media common layer owns stable fields, normalization, and media roles.
 - Provider adapters own provider protocol, authentication, limits, and response
   mapping.

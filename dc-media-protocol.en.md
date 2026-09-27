@@ -4,7 +4,7 @@
 
 > Status: Draft
 >
-> Scope: DramaClaw image, video, and audio model integration
+> Scope: DramaFoundry image, video, and audio model integration
 >
 > Protocol version: 1.2-draft
 
@@ -18,8 +18,8 @@ this document describe protocol requirements.
 
 ## 1. Goals and Boundaries
 
-DC-Media gives DramaClaw a provider-neutral image and asynchronous video
-contract. `dramaclaw-gateway` validates and normalizes that contract before a
+DC-Media gives DramaFoundry a provider-neutral image and asynchronous video
+contract. `dramafoundry-gateway` validates and normalizes that contract before a
 provider adapter creates an upstream request.
 
 Provider field names, authentication headers, task status names, and model
@@ -30,7 +30,7 @@ Responsibilities are divided as follows:
 
 - **Model catalog:** declares model identity, supported modes, resolutions,
   ratios, media-count and duration limits, and optional model parameters.
-- **DramaClaw:** validates user input, resolves the model catalog, creates a
+- **DramaFoundry:** validates user input, resolves the model catalog, creates a
   canonical request, and keeps quoted and executed parameters consistent.
 - **Unified model gateway:** validates public fields, normalizes values, and
   converts the request into a provider representation.
@@ -45,7 +45,7 @@ or undocumented provider parameters.
 
 1. One semantic value has one public representation. Automatic ratio is always
    `auto` in new requests.
-2. Provider differences stay in the gateway. DramaClaw does not switch between
+2. Provider differences stay in the gateway. DramaFoundry does not switch between
    `auto`, `adaptive`, `-1`, or omission by provider.
 3. Fields express media roles, and media combinations determine call shape. A
    reference image MUST NOT be promoted to a first frame.
@@ -96,7 +96,7 @@ therefore has its own request DTO and response contract.
 
 | Field | Type | Meaning |
 |---|---|---|
-| `model` | string | Gateway model name resolved from the DramaClaw model catalog |
+| `model` | string | Gateway model name resolved from the DramaFoundry model catalog |
 | `prompt` | string | Final user or business-layer prompt |
 | `image` | string or string[] | Image references for edits; video first frame for video requests |
 | `duration` | positive integer or `"auto"` | Video output duration |
@@ -263,7 +263,7 @@ The model catalog uses these canonical business-mode names:
 | `video_edit` | Edit a source video |
 | `video_extend` | Continue a source video with newly generated content |
 
-Modes are internal DramaClaw business semantics and are not transmitted as a
+Modes are internal DramaFoundry business semantics and are not transmitted as a
 top-level `mode` field. Models that must distinguish multimodal reference,
 video editing, and video extension use `metadata.omni_reference_task_type` as
 a stable task subtype. Modes map to public fields as follows:
@@ -288,7 +288,7 @@ extra media.
 
 Omni-reference task subtypes use this fixed mapping:
 
-| DramaClaw mode | `metadata.omni_reference_task_type` |
+| DramaFoundry mode | `metadata.omni_reference_task_type` |
 |---|---|
 | `all_reference` | `reference` |
 | `video_edit` | `edit` |
@@ -316,7 +316,7 @@ combined with reference image, video, audio, file, or link fields. A top-level
 first frame cannot be combined with a reference file or link. `reference_file`
 and `reference_link` are mutually exclusive.
 
-DramaClaw model modes map to public fields, but mode names are not transmitted.
+DramaFoundry model modes map to public fields, but mode names are not transmitted.
 The gateway validates mutual exclusion and derives a generic media call shape
 in this order:
 
@@ -330,7 +330,7 @@ in this order:
 7. no media input: text-to-video.
 
 The derived shape chooses a provider endpoint, workflow, or payload. It does not
-recover the original DramaClaw UI mode. Automatic-duration video editing cannot
+recover the original DramaFoundry UI mode. Automatic-duration video editing cannot
 include a reference file or link. If the provider does not support the shape,
 reject the request instead of dropping media or degrading modes.
 Video extension remains multimodal reference at the generic media-shape layer.
@@ -685,7 +685,7 @@ was cancelled. Otherwise return `task_cancellation_unsupported`.
 
 ## 12. Model Catalog Contract
 
-The DramaClaw model catalog declares user-facing modes, ratios, resolutions,
+The DramaFoundry model catalog declares user-facing modes, ratios, resolutions,
 duration bounds, and reference-media counts. The gateway adapter still enforces
 provider limits. An omitted catalog limit does not mean the provider is
 unlimited.
@@ -754,7 +754,7 @@ Per-item and total limits are validated separately. `referenceFileMax` and
 `referenceLinkMax` currently have a protocol maximum of one; a positive value
 enables the corresponding client input and zero means unsupported.
 `referenceFileTypes` contains lowercase extensions without a leading dot. An
-omitted limit means DramaClaw adds no catalog restriction; it does not mean the
+omitted limit means DramaFoundry adds no catalog restriction; it does not mean the
 provider has no limit.
 
 ### 12.2 Declarative Model Parameters
@@ -877,7 +877,7 @@ At minimum, a new image or video model requires:
 3. Configure resolutions, ratios, durations, reference file types, and media limits.
 4. Expose model-specific options only through declarative parameters.
 5. Implement provider adaptation in the gateway, not as a provider branch in
-   DramaClaw.
+   DramaFoundry.
 6. Verify fixed ratios preserve ratio, resolution, and matching dimensions.
 7. Verify automatic ratios omit dimensions and automatic duration emits only
    `duration: "auto"`.

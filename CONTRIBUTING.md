@@ -1,8 +1,8 @@
-# Contributing to dramaclaw-gateway
+# Contributing to dramafoundry-gateway
 
 [简体中文](./CONTRIBUTING.zh_CN.md) | English
 
-Thank you for helping DramaClaw reach more model providers. This guide defines
+Thank you for helping DramaFoundry reach more model providers. This guide defines
 the contribution contract for provider channels and media models.
 
 ## Before You Start
@@ -23,14 +23,14 @@ scope and expected behavior are already clear.
 The request path is:
 
 ```text
-DramaClaw -> DC-Media -> common normalization -> provider adapter -> provider
+DramaFoundry -> DC-Media -> common normalization -> provider adapter -> provider
 ```
 
 The layers have different owners:
 
 | Layer | Responsibility |
 |---|---|
-| DramaClaw model catalog | User-visible modes, ratios, resolutions, durations, and media limits |
+| DramaFoundry model catalog | User-visible modes, ratios, resolutions, durations, and media limits |
 | DC-Media common layer | Stable fields, normalization, media-role inference, and mutual exclusion |
 | Provider adapter | Authentication, provider endpoint, provider payload, limits, polling, and errors |
 | Channel metadata | Stable provider ID and protocol-level capabilities such as image or video |
@@ -167,7 +167,7 @@ bun run build
 ```
 
 Before marking a provider as verified, run an end-to-end request with a real
-provider account and then run the same model from a DramaClaw CE media node.
+provider account and then run the same model from a DramaFoundry CE media node.
 Record commands and sanitized evidence in the pull request.
 
 ## Pull Requests
@@ -193,7 +193,7 @@ unsupported paths fail safely, and the support matrix marks the remaining gaps.
 
 This repository is a public fork and holds registry credentials
 (`DOCKERHUB_USERNAME` / `DOCKERHUB_TOKEN`) for publishing
-`claymorelab/dramaclaw-gateway`. To keep them out of reach of pull request code:
+`claymorelab/dramafoundry-gateway`. To keep them out of reach of pull request code:
 
 - only workflows triggered by `push` on a `v*-dramaclaw.*` tag or by
   `workflow_dispatch` may reference those secrets;

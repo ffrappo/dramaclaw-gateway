@@ -1,4 +1,4 @@
-# AGENTS.md — Project Conventions for dramaclaw-gateway
+# AGENTS.md — Project Conventions for dramafoundry-gateway
 
 DO NOT send optional commentary
 
@@ -140,7 +140,7 @@ Do NOT directly import or call `encoding/json` in business code. `json.RawMessag
 
 ### Project Governance
 
-**Upstream attribution and compatibility:** `dramaclaw-gateway` is derived from
+**Upstream attribution and compatibility:** `dramafoundry-gateway` is derived from
 New API. Preserve legally and technically significant upstream information,
 including:
 
@@ -151,15 +151,15 @@ including:
 - historical changelog entries and documentation that describe upstream behavior.
 
 Do not rewrite history or present upstream New API / QuantumNous work as original
-`dramaclaw-gateway` work. Changes to compatibility identifiers require an
+`dramafoundry-gateway` work. Changes to compatibility identifiers require an
 explicit migration plan and corresponding tests.
 
 **Current repository identity:** Active collaboration and product-facing
 metadata MUST identify the repository contributors are actually using. Issue
 forms, pull request templates, contribution guides, security-reporting links,
 repository URLs, current-project documentation links, release notes, and new
-project-owned UI copy should use `dramaclaw-gateway` and
-`https://github.com/dramaclaw/dramaclaw-gateway`. These files may mention and
+project-owned UI copy should use `dramafoundry-gateway` and
+`https://github.com/dramaclaw/dramafoundry-gateway`. These files may mention and
 link New API as the upstream project, but MUST NOT direct current-repository
 issues, pull requests, security reports, or contribution checks to the upstream
 repository.

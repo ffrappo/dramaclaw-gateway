@@ -2,10 +2,10 @@
 
 ## Model Catalog
 
-- [ ] DramaClaw uses a stable `gateway_model`, and channel mappings do not change the client-facing model name.
+- [ ] DramaFoundry uses a stable `gateway_model`, and channel mappings do not change the client-facing model name.
 - [ ] Supported generation modes, aspect ratios, resolutions, and minimum and maximum durations are declared.
 - [ ] Limits for image, video, audio, file, and web-link references and allowed file types are declared.
-- [ ] DramaClaw sends only `DC-Media-Protocol` fields and no provider-specific parameters.
+- [ ] DramaFoundry sends only `DC-Media-Protocol` fields and no provider-specific parameters.
 
 ## Protocol and Conversion
 
@@ -27,7 +27,7 @@
 - [ ] Voice design uses `/v1/audio/voice-designs` and a dedicated request DTO instead of pretending to be speech synthesis.
 - [ ] Base fields keep OpenAI Speech API semantics; extensions exist only in DC-Media `metadata`.
 - [ ] Basic TTS, reference speech, and music are classified and validated consistently by the shared profile.
-- [ ] Provider fields remain inside the channel adapter and do not enter the DramaClaw request contract.
+- [ ] Provider fields remain inside the channel adapter and do not enter the DramaFoundry request contract.
 - [ ] Models explicitly reject unsupported reference-audio, emotion, or music capabilities.
 - [ ] Audio responses use binary, canonical URL, or canonical Base64 forms.
 - [ ] Voice-design responses preserve `voice`, `target_model`, preview audio, and the upstream `request_id`.
@@ -37,7 +37,7 @@
 
 ## Asynchronous Tasks
 
-- [ ] The creation response exposes only the `dramaclaw-gateway` public task ID.
+- [ ] The creation response exposes only the `dramafoundry-gateway` public task ID.
 - [ ] The upstream task ID is stored only in private task data.
 - [ ] Query states are mapped to stable public states.
 - [ ] Successful results use array semantics, including single-result responses.
@@ -54,7 +54,7 @@
 - [ ] `cd relaykit && GOWORK=off go build ./...` passes.
 - [ ] `cd web && bun run typecheck && bun run build` passes.
 - [ ] Task creation, querying, and result retrieval are verified end to end with a real provider account.
-- [ ] The same model is verified end to end through the DramaClaw CE XiaHua node.
+- [ ] The same model is verified end to end through the DramaFoundry CE XiaHua node.
 
 ## Release Information
 

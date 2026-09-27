@@ -1,37 +1,37 @@
-<div align="center" data-project="dramaclaw-gateway">
+<div align="center" data-project="dramafoundry-gateway">
 
-# dramaclaw-gateway
+# dramafoundry-gateway
 
-**The model gateway that ships inside [DramaClaw](https://github.com/dramaclaw/dramaclaw)**
+**The model gateway that ships inside [DramaFoundry](https://github.com/dramaclaw/dramaclaw)**
 
 [简体中文](./README.zh_CN.md) | English
 
-[![Docker Hub](https://img.shields.io/docker/v/claymorelab/dramaclaw-gateway?sort=semver&label=docker&logo=docker&logoColor=white)](https://hub.docker.com/r/claymorelab/dramaclaw-gateway)
+[![Docker Hub](https://img.shields.io/docker/v/claymorelab/dramafoundry-gateway?sort=semver&label=docker&logo=docker&logoColor=white)](https://hub.docker.com/r/claymorelab/dramafoundry-gateway)
 [![License](https://img.shields.io/badge/license-see_LICENSE-blue.svg)](./LICENSE)
 
 </div>
 
-`dramaclaw-gateway` is the OpenAI-compatible model gateway bundled with every
-DramaClaw CE install. It accepts the **DC-Media** contract DramaClaw uses for
+`dramafoundry-gateway` is the OpenAI-compatible model gateway bundled with every
+DramaFoundry CE install. It accepts the **DC-Media** contract DramaFoundry uses for
 image, video and audio generation (media roles, reference images, first / last
 frames), normalizes it, and converts each request into the provider's native
 API. Text models pass through as ordinary OpenAI-compatible chat calls.
 
 ```text
-DramaClaw -> DC-Media -> dramaclaw-gateway -> provider adapter -> provider API
+DramaFoundry -> DC-Media -> dramafoundry-gateway -> provider adapter -> provider API
 ```
 
 It is a maintained fork of [New API](https://github.com/QuantumNous/new-api):
 you get New API's channel management, tokens, quotas and admin UI, plus the
-DC-Media media adapters DramaClaw needs. Its media endpoints follow DC-Media
+DC-Media media adapters DramaFoundry needs. Its media endpoints follow DC-Media
 semantics and do not promise compatibility with historical New API media task
 request or response shapes.
 
-## Use it with DramaClaw (the normal way)
+## Use it with DramaFoundry (the normal way)
 
-You do not install this gateway separately. DramaClaw CE's
+You do not install this gateway separately. DramaFoundry CE's
 [`docker-compose.yml`](https://github.com/dramaclaw/dramaclaw/blob/main/docker-compose.yml)
-starts it as the `newapi` service next to the DramaClaw API and web UI:
+starts it as the `newapi` service next to the DramaFoundry API and web UI:
 
 ```bash
 git clone https://github.com/dramaclaw/dramaclaw.git
@@ -44,12 +44,12 @@ Then open <http://localhost:8080> → **Settings → Model Config** and pick a m
 
 | Mode | What the gateway does |
 |---|---|
-| **Official** | Idle. DramaClaw talks to the official RelayClaw service with your DC key. |
-| **Custom** | One click initializes this gateway (root account, runtime token). Add your own provider channels in its admin UI at <http://localhost:3000>; every model DramaClaw calls goes through them. |
+| **Official** | Idle. DramaFoundry talks to the official RelayClaw service with your DC key. |
+| **Custom** | One click initializes this gateway (root account, runtime token). Add your own provider channels in its admin UI at <http://localhost:3000>; every model DramaFoundry calls goes through them. |
 | **Local + Official Hybrid** | Official models for the main pipeline, extra channels (e.g. a local ComfyUI video workflow) through this gateway. |
 
 The gateway's SQLite database lives in the Compose `newapi-data` volume and is
-shared with the DramaClaw API, which provisions the admin account, runtime token,
+shared with the DramaFoundry API, which provisions the admin account, runtime token,
 channels and model mappings for you. Pin the gateway version with
 `DRAMACLAW_GATEWAY_VERSION` in `.env`. Full walkthrough:
 [Configuring Models](https://github.com/dramaclaw/dramaclaw/blob/main/docs/en/getting-started/configuring-models.md).
@@ -57,25 +57,25 @@ channels and model mappings for you. Pin the gateway version with
 ## Docker image
 
 Multi-arch (amd64 / arm64) images are published to Docker Hub as
-[`claymorelab/dramaclaw-gateway`](https://hub.docker.com/r/claymorelab/dramaclaw-gateway).
+[`claymorelab/dramafoundry-gateway`](https://hub.docker.com/r/claymorelab/dramafoundry-gateway).
 
-- Tags follow the upstream New API version plus a DramaClaw suffix, e.g.
-  `v1.0.0-rc.24-dramaclaw.1`. There is **no `latest` tag**: DramaClaw CE pins
+- Tags follow the upstream New API version plus a DramaFoundry suffix, e.g.
+  `v1.0.0-rc.24-dramaclaw.1`. There is **no `latest` tag**: DramaFoundry CE pins
   the exact tag it was tested against, and so should you.
 - Each tag is built from the matching git tag in this repository, signed with
   cosign, and ships an SBOM and provenance attestation.
 - The container listens on port `3000`, works in `/data`, and uses SQLite at
   `/data/one-api.db` unless `SQL_DSN` points at PostgreSQL / MySQL.
 
-Standalone run (without DramaClaw), for example to host channels for several
-DramaClaw instances:
+Standalone run (without DramaFoundry), for example to host channels for several
+DramaFoundry instances:
 
 ```bash
-docker run -d --name dramaclaw-gateway \
+docker run -d --name dramafoundry-gateway \
   -p 3000:3000 \
-  -v dramaclaw-gateway-data:/data \
+  -v dramafoundry-gateway-data:/data \
   -e TZ=Asia/Shanghai \
-  claymorelab/dramaclaw-gateway:v1.0.0-rc.24-dramaclaw.1
+  claymorelab/dramafoundry-gateway:v1.0.0-rc.24-dramaclaw.1
 ```
 
 Open <http://localhost:3000> and complete the setup wizard to create the admin
@@ -96,8 +96,8 @@ truth for channel-level capabilities.
 Requirements: Go from [`go.mod`](./go.mod), Bun `1.3.14`, and Docker Compose.
 
 ```bash
-git clone https://github.com/dramaclaw/dramaclaw-gateway.git
-cd dramaclaw-gateway
+git clone https://github.com/dramaclaw/dramafoundry-gateway.git
+cd dramafoundry-gateway
 make dev-api          # API + dev database via docker-compose.dev.yml
 make dev-web          # frontend on http://localhost:5173, in another terminal
 ```

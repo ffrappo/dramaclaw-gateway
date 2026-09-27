@@ -1,8 +1,8 @@
-# 为 dramaclaw-gateway 贡献代码
+# 为 dramafoundry-gateway 贡献代码
 
 简体中文 | [English](./CONTRIBUTING.md)
 
-感谢你帮助 DramaClaw 接入更多模型供应商。本文定义渠道和媒体模型贡献的工程契约。
+感谢你帮助 DramaFoundry 接入更多模型供应商。本文定义渠道和媒体模型贡献的工程契约。
 
 ## 开始之前
 
@@ -19,14 +19,14 @@
 请求链路为：
 
 ```text
-DramaClaw -> DC-Media -> 公共层标准化 -> 渠道适配器 -> 供应商
+DramaFoundry -> DC-Media -> 公共层标准化 -> 渠道适配器 -> 供应商
 ```
 
 各层责任不同：
 
 | 层级 | 责任 |
 |---|---|
-| DramaClaw 模型目录 | 用户可见模式、比例、分辨率、时长和素材上限 |
+| DramaFoundry 模型目录 | 用户可见模式、比例、分辨率、时长和素材上限 |
 | DC-Media 公共层 | 稳定字段、值规范化、素材角色推断和互斥校验 |
 | 渠道适配器 | 鉴权、供应商接口、请求结构、限制、轮询和错误转换 |
 | 渠道元数据 | 稳定 provider ID 及 image、video 等协议级能力 |
@@ -147,7 +147,7 @@ bun run typecheck
 bun run build
 ```
 
-标记供应商已验证前，需要使用真实供应商账号完成端到端请求，再从 DramaClaw CE 媒体节点
+标记供应商已验证前，需要使用真实供应商账号完成端到端请求，再从 DramaFoundry CE 媒体节点
 调用同一模型，并在 PR 中提供脱敏后的命令和证据。
 
 ## Pull Request
@@ -170,7 +170,7 @@ bun run build
 
 ## 公开仓库中的 CI 密钥
 
-本仓库是公开 fork，持有用于发布 `claymorelab/dramaclaw-gateway` 镜像的 registry 凭证
+本仓库是公开 fork，持有用于发布 `claymorelab/dramafoundry-gateway` 镜像的 registry 凭证
 （`DOCKERHUB_USERNAME` / `DOCKERHUB_TOKEN`）。为避免凭证暴露给 PR 代码：
 
 - 只有由 `v*-dramaclaw.*` tag 的 `push` 或 `workflow_dispatch` 触发的工作流可以引用这些 secrets；

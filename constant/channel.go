@@ -60,7 +60,7 @@ const (
 	ChannelTypeNewAPI         = 60
 	ChannelTypeFal            = 61
 	ChannelTypeDoubaoAudio    = 62
-	// Keep 63 aligned with DramaClaw and the commercial RelayClaw channel ID.
+	// Keep 63 aligned with DramaFoundry and the commercial RelayClaw channel ID.
 	ChannelTypeComfyUI = 63
 	ChannelTypeDummy   // this one is only for count, do not add any channel after this
 

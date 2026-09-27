@@ -4,11 +4,11 @@
 
 > 状态：草案
 >
-> 适用范围：DramaClaw 图片、视频与音频模型接入
+> 适用范围：DramaFoundry 图片、视频与音频模型接入
 >
 > 协议版本：1.2-draft
 
-本文档定义 DramaClaw 向统一模型网关发送图片、视频和音频生成请求时使用的公共协议。新增媒体模型或供应商时，应优先适配本协议，不应在业务层新增供应商专属请求结构。
+本文档定义 DramaFoundry 向统一模型网关发送图片、视频和音频生成请求时使用的公共协议。新增媒体模型或供应商时，应优先适配本协议，不应在业务层新增供应商专属请求结构。
 
 本文使用以下规范用语：
 
@@ -23,7 +23,7 @@
 ```text
 模型目录声明能力
         ↓
-DramaClaw 选择业务模式并构造统一请求
+DramaFoundry 选择业务模式并构造统一请求
         ↓
 统一模型网关校验公共协议
         ↓
@@ -33,7 +33,7 @@ DramaClaw 选择业务模式并构造统一请求
 各层职责如下：
 
 - **模型目录**：声明模型身份、支持模式、分辨率、比例、素材数量、时长与音频能力限制，以及可选模型参数。
-- **DramaClaw**：校验用户输入，解析模型目录，生成规范化请求，并保证报价参数与执行参数一致。
+- **DramaFoundry**：校验用户输入，解析模型目录，生成规范化请求，并保证报价参数与执行参数一致。
 - **统一模型网关**：校验公共字段之间的一致性，将公共值转换为供应商所需格式，并处理供应商差异。
 - **供应商适配器**：只负责字段映射和供应商约束，不得改变公共字段表达的素材角色，也不得静默丢弃输入素材。
 
@@ -47,7 +47,7 @@ DramaClaw 选择业务模式并构造统一请求
 ## 2. 设计原则
 
 1. **一种语义只有一种公共表示。** 例如自动比例统一为 `auto`，不在业务层混用 `adaptive`。
-2. **供应商差异停留在网关。** DramaClaw 不应根据供应商分别发送 `auto`、`adaptive`、`-1` 或省略字段。
+2. **供应商差异停留在网关。** DramaFoundry 不应根据供应商分别发送 `auto`、`adaptive`、`-1` 或省略字段。
 3. **素材角色由字段表达，调用形态由素材组合确定。** 首帧、尾帧和参考图片必须使用各自字段；网关可以根据规范字段及素材数量选择对应的上游调用形态，但不得把参考图片自动改写为首帧。
 4. **能力由模型目录声明。** 前端展示和后端校验必须读取同一模型目录；前端限制不能替代后端校验。
 5. **报价与执行共享规范化结果。** 模型、分辨率、时长、素材数量和是否包含视频输入必须一致。
@@ -224,7 +224,7 @@ Voice Design Profile 创建的是后续语音合成可引用的音色资源，�
 
 ## 4. 值规范化
 
-DramaClaw 在向网关发送请求前，必须执行以下规范化：
+DramaFoundry 在向网关发送请求前，必须执行以下规范化：
 
 ```text
 adaptive → auto
@@ -390,9 +390,9 @@ adaptive → auto
 | `video_edit` | 以源视频为基础进行编辑 |
 | `video_extend` | 从一个源视频继续生成后续内容 |
 
-模式是 DramaClaw 内部的业务语义，用于决定界面、模型目录校验、素材角色和最终公共字段。模式名称不通过顶层 `mode` 传输；进入网关后，单图、多图和全能参考允许按素材组合归一化为供应商可支持的调用形态。需要区分全模态参考、视频编辑和视频延长的模型使用 `metadata.omni_reference_task_type` 传递稳定的子任务类型。
+模式是 DramaFoundry 内部的业务语义，用于决定界面、模型目录校验、素材角色和最终公共字段。模式名称不通过顶层 `mode` 传输；进入网关后，单图、多图和全能参考允许按素材组合归一化为供应商可支持的调用形态。需要区分全模态参考、视频编辑和视频延长的模型使用 `metadata.omni_reference_task_type` 传递稳定的子任务类型。
 
-当前协议不使用顶层 `mode` 字段。DramaClaw 根据业务模式生成规范的素材字段组合和必要的全模态子任务类型，网关按照第 7.2 节的固定优先级识别通用素材形态，再由支持全模态子任务类型的适配器转换为供应商协议。客户端和单个供应商适配器不得私自增加 `mode`，也不得建立另一套隐式模式推断规则。
+当前协议不使用顶层 `mode` 字段。DramaFoundry 根据业务模式生成规范的素材字段组合和必要的全模态子任务类型，网关按照第 7.2 节的固定优先级识别通用素材形态，再由支持全模态子任务类型的适配器转换为供应商协议。客户端和单个供应商适配器不得私自增加 `mode`，也不得建立另一套隐式模式推断规则。
 
 ### 7.1 模式与字段映射
 
@@ -410,7 +410,7 @@ adaptive → auto
 说明：
 
 - 表中的参考字段均位于 `metadata`。
-- `image_to_video`、`image_reference` 和 `all_reference` 是不同的 DramaClaw 业务模式，但在线协议允许它们归一化为相同或相近的素材结构。
+- `image_to_video`、`image_reference` 和 `all_reference` 是不同的 DramaFoundry 业务模式，但在线协议允许它们归一化为相同或相近的素材结构。
 - 只有一张 `reference_images` 时，网关统一按图生视频调用形态处理；即使该请求源自图片参考或全能参考模式，也不要求网关保留模式名称。
 - 有多张 `reference_images` 且没有视频或音频时，网关按图片参考调用形态处理；供应商只支持单图时必须返回明确的不支持错误，不得静默丢弃多余图片。
 - 一旦存在 `reference_videos`、`reference_audios`、`reference_file` 或 `reference_link`，固定时长请求按全能参考调用形态处理。
@@ -421,7 +421,7 @@ adaptive → auto
 
 全模态子任务类型使用以下固定映射：
 
-| DramaClaw 模式 | `metadata.omni_reference_task_type` |
+| DramaFoundry 模式 | `metadata.omni_reference_task_type` |
 |---|---|
 | `all_reference` | `reference` |
 | `video_edit` | `edit` |
@@ -445,7 +445,7 @@ adaptive → auto
 
 推断规则：
 
-- 推断结果只用于选择供应商端点、Workflow 或请求结构，不用于恢复 DramaClaw 原始界面模式。
+- 推断结果只用于选择供应商端点、Workflow 或请求结构，不用于恢复 DramaFoundry 原始界面模式。
 - 素材数组中的空字符串不计入数量；重复素材是否允许由模型目录和供应商约束决定，不得通过静默去重绕过数量限制。
 - 顶层 `image` 与 `reference_images` 不得同时出现。首帧和参考图片具有不同语义，网关不得通过取第一张图片解决冲突。
 - 顶层 `image` 不得与 `reference_file` 或 `reference_link` 混用。
@@ -657,7 +657,7 @@ adaptive → auto
 规则：
 
 - 模型目录决定字段是否展示和可用。
-- DramaClaw 发送用户选择或已明确的产品默认值。
+- DramaFoundry 发送用户选择或已明确的产品默认值。
 - 网关仅向支持该字段的供应商发送；不支持时应省略或返回明确的参数错误。
 - 可选字段不得被重复放在顶层和 `metadata`。
 - `omni_reference_task_type` 只用于模型目录声明支持的全模态参考模型，并且必须与实际素材、比例和时长组合一致。
@@ -685,7 +685,7 @@ DC-Media 将音频能力分为 Speech Profile 和 Voice Design Profile。Speech 
 ```json
 {
   "model": "example-tts-model",
-  "input": "欢迎使用 DramaClaw。",
+  "input": "欢迎使用 DramaFoundry。",
   "voice": "example-voice",
   "response_format": "mp3",
   "speed": 1.0
@@ -831,7 +831,7 @@ Content-Type: audio/mpeg
 }
 ```
 
-DramaClaw 必须支持音频二进制、规范 JSON URL 和规范 Base64 三种响应。URL 可以是临时地址；是否持久归档不属于本协议。兼容客户端可以继续读取顶层 `url`、`audio_url` 或 `audioUrl`，但新网关响应应该使用 `audio.url`。
+DramaFoundry 必须支持音频二进制、规范 JSON URL 和规范 Base64 三种响应。URL 可以是临时地址；是否持久归档不属于本协议。兼容客户端可以继续读取顶层 `url`、`audio_url` 或 `audioUrl`，但新网关响应应该使用 `audio.url`。
 
 ### 10.7 音频适配器责任
 
@@ -1007,7 +1007,7 @@ DramaClaw 必须支持音频二进制、规范 JSON URL 和规范 Base64 三种�
 - `referenceVideoTotalMinSeconds`
 - `referenceVideoTotalMaxSeconds`
 
-单条限制和合计限制应分别校验。`referenceFileMax` 和 `referenceLinkMax` 当前最大为 1；正值表示模型目录允许展示对应入口，`0` 表示不支持。`referenceFileTypes` 使用不带点的小写扩展名。其他限制留空表示 DramaClaw 不增加目录限制，不代表供应商没有限制；网关仍应执行供应商最终约束。
+单条限制和合计限制应分别校验。`referenceFileMax` 和 `referenceLinkMax` 当前最大为 1；正值表示模型目录允许展示对应入口，`0` 表示不支持。`referenceFileTypes` 使用不带点的小写扩展名。其他限制留空表示 DramaFoundry 不增加目录限制，不代表供应商没有限制；网关仍应执行供应商最终约束。
 
 ### 12.2 声明式专用参数
 
@@ -1154,7 +1154,7 @@ DramaClaw 必须支持音频二进制、规范 JSON URL 和规范 Base64 三种�
 3. 声明全部支持模式，不从模型名称猜测能力。
 4. 配置分辨率、比例、输出时长、参考文件类型及素材限制。
 5. 仅通过声明式参数开放模型专用选项。
-6. 在网关实现供应商适配，不在 DramaClaw 增加供应商专属请求分支。
+6. 在网关实现供应商适配，不在 DramaFoundry 增加供应商专属请求分支。
 7. 验证固定比例请求同时保留 `ratio`、`resolution` 和匹配的宽高。
 8. 验证自动比例请求不包含 `width`、`height`。
 9. 验证自动时长仅发送 `duration: "auto"`。
@@ -1165,7 +1165,7 @@ DramaClaw 必须支持音频二进制、规范 JSON URL 和规范 Base64 三种�
 14. 为非法字段组合增加拒绝测试。
 15. 在 PR 中明确迁移、配置、供应商和计费影响；没有影响也应明确写明。
 16. 音频模型验证基础字段、`metadata` 扩展和供应商请求之间存在明确映射。
-17. 音频模型验证二进制、URL 或 Base64 响应至少一种，并保证 DramaClaw 可以保存结果。
+17. 音频模型验证二进制、URL 或 Base64 响应至少一种，并保证 DramaFoundry 可以保存结果。
 
 ## 17. 契约测试最低要求
 

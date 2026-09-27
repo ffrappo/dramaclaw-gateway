@@ -2,10 +2,10 @@
 
 ## 模型目录
 
-- [ ] DramaClaw 使用稳定的 `gateway_model`，渠道映射不会改变客户端模型名。
+- [ ] DramaFoundry 使用稳定的 `gateway_model`，渠道映射不会改变客户端模型名。
 - [ ] 声明支持的生成模式、比例、分辨率、最短和最长时长。
 - [ ] 声明图片、视频、音频、文件和网页链接参考素材上限及允许的文件类型。
-- [ ] DramaClaw 只发送 `DC-Media-Protocol` 字段，不发送供应商专属参数。
+- [ ] DramaFoundry 只发送 `DC-Media-Protocol` 字段，不发送供应商专属参数。
 
 ## 协议与转换
 
@@ -27,7 +27,7 @@
 - [ ] 音色设计使用 `/v1/audio/voice-designs` 和独立请求 DTO，不伪装成语音合成。
 - [ ] 基础字段使用 OpenAI Speech API 语义，扩展字段只放在 DC-Media `metadata`。
 - [ ] 基础 TTS、参考音频合成和音乐生成由公共 Profile 一致识别和校验。
-- [ ] 供应商字段只存在于渠道适配器，不进入 DramaClaw 公共请求。
+- [ ] 供应商字段只存在于渠道适配器，不进入 DramaFoundry 公共请求。
 - [ ] 模型不支持请求中的参考音频、情感或音乐能力时明确拒绝。
 - [ ] 音频响应使用二进制、规范 URL 或规范 Base64 形式。
 - [ ] 音色设计响应保留 `voice`、`target_model`、预览音频和上游 `request_id`。
@@ -37,7 +37,7 @@
 
 ## 异步任务
 
-- [ ] 创建响应只暴露 `dramaclaw-gateway` 的公开任务 ID。
+- [ ] 创建响应只暴露 `dramafoundry-gateway` 的公开任务 ID。
 - [ ] 上游任务 ID 仅保存在任务私有数据中。
 - [ ] 查询状态映射到固定公共状态。
 - [ ] 成功结果使用数组语义，单结果也不改变结构。

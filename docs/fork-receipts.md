@@ -1,12 +1,12 @@
-# Fork receipts: DramaClaw pipeline on fully Fornace-owned stack
+# Fork receipts: DramaFoundry pipeline on fully Fornace-owned stack
 
-Date: 2026-09-27. Machine: MacBook Pro M5 Max (local). Goal: zero DramaClaw cloud
+Date: 2026-09-27. Machine: MacBook Pro M5 Max (local). Goal: zero DramaFoundry cloud
 (no DRAMACLAW_API_URL / DRAMACLAW_AGENT_TOKEN / DRAMACLAW_PROJECT_ID against their
 SaaS), zero commercial dependency beyond our own paid infra (llm.fornace.net, fal.ai).
 
 Stack under test:
-- dramaclaw-gateway (Go, New API fork): 127.0.0.1:3300
-- DramaClaw CE backend (FastAPI, src/novelvideo): 127.0.0.1:8780
+- dramafoundry-gateway (Go, New API fork): 127.0.0.1:3300
+- DramaFoundry CE backend (FastAPI, src/novelvideo): 127.0.0.1:8780
 - Upstreams: llm.fornace.net (LLM/embedding/vision/image via mantice channel), fal.run (video families + index-tts-2)
 
 ## 1. Gateway
@@ -14,14 +14,14 @@ Stack under test:
 ### Build
 
 ```
-$ cd ~/works/repos/dramaclaw-gateway && go build -o bin/dramaclaw-gateway .
+$ cd ~/works/repos/dramafoundry-gateway && go build -o bin/dramafoundry-gateway .
 Go build: Success   (go1.26.4 darwin/arm64, binary 133.5M)
 ```
 
 ### Run
 
 ```
-$ ./dramaclaw-gateway-bin --port 3300 --log-dir ./logs
+$ ./dramafoundry-gateway-bin --port 3300 --log-dir ./logs
 New API v0.0.0 ready in 165 ms  (pre-existing instance started 2026-09-26, repo-root one-api.db)
 ```
 
@@ -50,7 +50,7 @@ h3-max,h3-max-image,h3-max-reference,h3-max-text,h3-max-turbo,h3-max-turbo-image
 index-tts-2,kling-3-pro,kling-3-pro-image,kling-3-pro-text,wan-3,wan-3-image,wan-3-text
 ```
 
-All 25 route to Fornace-owned infrastructure. No DramaClaw cloud model names remain.
+All 25 route to Fornace-owned infrastructure. No DramaFoundry cloud model names remain.
 
 ### Upstream sanity (direct, before channel mapping)
 
@@ -61,7 +61,7 @@ $ curl -s $FORNACE_LLM_BASE_URL/images/generations -d '{"model":"fornace-image",
 {"created":1790500421,"data":[{"b64_json":"iVBORw0KGgoAAAANS..."  (valid PNG)
 ```
 
-## 2. Backend (DramaClaw CE)
+## 2. Backend (DramaFoundry CE)
 
 Env changes over `.env` (backup at `.env.pre-fork-backup`):
 - All 24 `DC-*-LLM` logical models -> fornace-fast (vision roles -> fornace-vision, embeddings -> fornace-embed)
@@ -133,7 +133,7 @@ $ curl -X POST $B/projects/$PID/episodes/plan -d '{"target_episodes":2,"planning
 $ curl -X POST $B/projects/$PID/characters/build -d '{}'
 {"ok":true,"task_type":"build_characters","task_id":"9b938aae-06c8-4ea9-ad54-f3aa1d5eddca"}
 
-Gateway log (dramaclaw-gateway/logs/oneapi-20260926030518.log):
+Gateway log (dramafoundry-gateway/logs/oneapi-20260926030518.log):
 [GIN] POST /v1/chat/completions 200 30.7s
 [INFO] record consume log: channel_id=2, model_name="fornace-fast",
       prompt_tokens=1025, completion_tokens=1383, token_name="dramaclaw-local"
@@ -145,7 +145,7 @@ Gateway log (dramaclaw-gateway/logs/oneapi-20260926030518.log):
 ```
 
 This is the proof of the full chain: backend -> gateway :3300 -> llm.fornace.net (fornace-fast),
-billed on our own gateway wallet. No DramaClaw endpoint involved.
+billed on our own gateway wallet. No DramaFoundry endpoint involved.
 
 ### 3.6 Identity planning (episode pipeline start)
 
@@ -201,8 +201,8 @@ $ curl $STATIC/portrait.png -> 200, 2333138 bytes, PNG 1024x1536 (served from lo
 ## 4. What is self-hosted vs external
 
 Self-hosted (this machine):
-- Control plane (projects, ingest, episodes, beats, tasks, pipeline state): DramaClaw CE backend, FastAPI + local SQLite/state dirs
-- Media/LLM gateway: dramaclaw-gateway, Go + local SQLite
+- Control plane (projects, ingest, episodes, beats, tasks, pipeline state): DramaFoundry CE backend, FastAPI + local SQLite/state dirs
+- Media/LLM gateway: dramafoundry-gateway, Go + local SQLite
 - Auth: CE local mode (st_session cookie); agent sessions in-process
 - Reference media relay: data_uri provider (new), no external storage
 
@@ -215,3 +215,46 @@ Remaining external touchpoints (optional, off by default or replaceable):
   (src/novelvideo/official_media_models.json). Loopback run keeps the local file; updater polls
   the remote manifest unless disabled. Harmless but worth pinning to a local path for hermetic runs.
 - Frontend (web UI) is optional for agent use; not required by the skill contract.
+
+## 5. Team deployment receipt (2026-09-27, DramaFoundry rename day)
+
+Renamed DramaClaw/SuperTale -> DramaFoundry across both repos (identity, env
+contract DRAMACLAW_*/SUPERTALE_* -> DRAMAFOUNDRY_*, MCP module, tool names,
+locales incl. zh 虾导, brand assets; /api/v1 paths and DC-* model aliases
+unchanged for client compatibility). Repos: dramafoundry-gateway (GitHub
+ffrappo/dramafoundry-gateway), video-workflows/dramafoundry with the client
+skill at dramafoundry-skill/ (identity DramaFoundry, internal skill name
+fornace-video, tools fornace_*). External npm dep dramaclaw-spec-render and
+upstream CDN URLs keep their published names.
+
+Deployment on frappotoys Hetzner box (49.12.9.255):
+- /opt/dramafoundry: deploy-compose.yml (api 127.0.0.1:33710, gateway 33712,
+  web 33711), systemd dramafoundry.service, data under /opt/dramafoundry/data
+  (SQLite bind mounts: ce state + gateway one-api.db seeded from the Mac dev
+  db: root admin, mantice + fal channels, dramaclaw-local relay token).
+- TLS: nginx vhost dramafoundry (pattern-matched to adsmanager/hermes-sentia),
+  Let's Encrypt via dockerized certbot webroot; renewal via snap certbot timer.
+- DNS: dramafoundry.fornace.net A 49.12.9.255 (Route 53 zone
+  Z0654222K0I5R6VEHQ2J, creds on the box /root/.aws/credentials [route53];
+  fornace.net is AWS-hosted, not Cloudflare).
+- Auth (new code, video-workflows/dramafoundry commit 7462aee):
+  ST_TEAM_PASSPHRASE activates TeamPassphraseAuthPort. /api/v1/config reports
+  auth_required=true so the SPA gates on /login; POST /api/v1/auth/login
+  auto-provisions unknown usernames when the shared team passphrase matches;
+  sessions are SHA-256-hashed opaque tokens, 7-day TTL, per-username rate
+  limit (10 failures / 5 min). CE local mode without the env var is unchanged.
+- CE settings: model_gateway_mode=custom, base http://newapi:3000/v1 (compose
+  network), admin root; provisioner enabled. Gateway panel reachable only
+  inside the compose network / loopback.
+- The api image bakes the Fornace skill fork at .hermes/skills/dramafoundry
+  (upstream copy is replaced by dramafoundry-skill content in the build
+  context on the box; see dramafoundry repo commit c8d4ac3).
+
+Smoke test from the Mac, all green:
+- https://dramafoundry.fornace.net serves the SPA, title DramaFoundry
+- GET /api/v1/config -> auth_required true
+- unauthenticated GET /api/v1/projects -> 401; wrong passphrase login -> 401
+- login smoketest + correct passphrase -> auto-provisioned, cookie set
+- authed project create deploy_smoke (01M3HAQY4GHYX07ZXPS8EXPR1P), novel
+  upload (487 chars, 1 chapter), drama spine -> fail-loud screenplay_format
+  gate error (精品剧必须包含场景头...), narrated spine -> ingest_fast queued

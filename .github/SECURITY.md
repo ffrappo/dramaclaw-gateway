@@ -30,7 +30,7 @@ We take security vulnerability reports very seriously. If you discover a securit
 **Do NOT** report security vulnerabilities in public GitHub Issues.
 
 To report a security issue, use the GitHub Security Advisories tab to
-"[Open a draft security advisory](https://github.com/dramaclaw/dramaclaw-gateway/security/advisories/new)".
+"[Open a draft security advisory](https://github.com/dramaclaw/dramafoundry-gateway/security/advisories/new)".
 This is the supported private reporting channel for this repository.
 
 ### What to Include
@@ -55,7 +55,7 @@ To help us understand and resolve the issue more quickly, please include the fol
 
 ## Security Best Practices
 
-When deploying and using dramaclaw-gateway, we recommend following these security best practices:
+When deploying and using dramafoundry-gateway, we recommend following these security best practices:
 
 ### Deployment Security
 

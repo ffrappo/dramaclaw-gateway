@@ -9,8 +9,8 @@ tests take precedence.
 
 ## Goals and Boundaries
 
-DC-Media gives DramaClaw provider-neutral image, asynchronous video, speech,
-and voice-design contracts. `dramaclaw-gateway` validates and normalizes those
+DC-Media gives DramaFoundry provider-neutral image, asynchronous video, speech,
+and voice-design contracts. `dramafoundry-gateway` validates and normalizes those
 contracts before a provider adapter creates an upstream request.
 
 Provider field names, authentication headers, task status names, and model
@@ -37,7 +37,7 @@ that can access the voice.
 
 | Field | Type | Meaning |
 |---|---|---|
-| `model` | string | Gateway model name resolved from the DramaClaw model catalog |
+| `model` | string | Gateway model name resolved from the DramaFoundry model catalog |
 | `prompt` | string | Final user or business-layer prompt |
 | `image` | string or string[] | Image references for edits; video first frame for video requests |
 | `duration` | positive integer or `"auto"` | Video output duration |
@@ -126,7 +126,7 @@ combined with reference image, video, audio, file, or link fields. A top-level
 first frame cannot be combined with a reference file or link. `reference_file`
 and `reference_link` are mutually exclusive.
 
-DramaClaw model modes map to public fields, but mode names are not transmitted
+DramaFoundry model modes map to public fields, but mode names are not transmitted
 as a top-level `mode`. Omni-reference models use
 `metadata.omni_reference_task_type` to distinguish `reference`, `edit`, and
 `extend` subtypes. The gateway validates mutual exclusion and derives a generic
@@ -142,7 +142,7 @@ media call shape in this order:
 7. no media input: text-to-video.
 
 The derived shape chooses a provider endpoint, workflow, or payload. It does not
-recover the original DramaClaw UI mode. If the provider does not support the
+recover the original DramaFoundry UI mode. If the provider does not support the
 shape, reject the request instead of dropping media or degrading modes.
 Video extension remains multimodal reference at the generic media-shape layer.
 A supporting adapter distinguishes it using the explicit `extend` subtype; it
@@ -341,7 +341,7 @@ specific task was cancelled. Otherwise return `task_cancellation_unsupported`.
 
 ## Model Catalog and Adapter Limits
 
-The DramaClaw model catalog declares user-facing modes, ratios, resolutions,
+The DramaFoundry model catalog declares user-facing modes, ratios, resolutions,
 duration bounds, and reference-media counts. The gateway adapter still enforces
 provider limits. An omitted catalog limit does not mean the provider is
 unlimited.

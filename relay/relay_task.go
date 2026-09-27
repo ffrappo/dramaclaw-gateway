@@ -580,7 +580,7 @@ func buildDCMediaTaskResponse(task *model.Task) map[string]any {
 		"model":    task.Properties.OriginModelName,
 		"results":  results,
 	}
-	// DramaClaw currently consumes a flat result_url while results remains the
+	// DramaFoundry currently consumes a flat result_url while results remains the
 	// canonical DC-Media result collection.
 	if resultURL != "" && task.Status == model.TaskStatusSuccess {
 		response["result_url"] = resultURL

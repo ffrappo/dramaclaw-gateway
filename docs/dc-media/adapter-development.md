@@ -1,6 +1,6 @@
 # DC 媒体适配器开发指南
 
-本文说明如何在 `dramaclaw-gateway` 中为 `DC-Media-Protocol v1` 增加供应商适配。
+本文说明如何在 `dramafoundry-gateway` 中为 `DC-Media-Protocol v1` 增加供应商适配。
 协议定义以仓库根目录的 `dc-media-protocol.md` 为准。
 
 新渠道可以先生成安全骨架：
@@ -15,7 +15,7 @@ make new-adapter PROVIDER=example TYPE=64 MODE=task CAPABILITIES=video
 
 1. 确认 New API 现有适配器是否已经支持目标接口。
 2. 只在公共字段无法正确转换时新增或扩展独立适配器。
-3. 不根据模型名称猜测 DramaClaw 的业务模式。调用形态必须来自素材结构。
+3. 不根据模型名称猜测 DramaFoundry 的业务模式。调用形态必须来自素材结构。
 4. 不迁移商业虾驿的计费表达式、调用审计、结果归档或运营功能。
 
 视频请求在 `relay/common.ValidateDCMediaTaskRequest` 中完成规范化、互斥校验和形态
@@ -41,7 +41,7 @@ TTS、参考音频合成和音乐生成。不得为 Speech Profile 新增平行�
 - 若供应商支持安全的按任务取消，实现可选的 `channel.TaskCanceller`。
 
 `TaskAdaptor` 的职责分为验证、请求构造、提交响应解析、任务查询和查询响应解析。
-公共任务 ID 与供应商任务 ID 必须分开保存，客户端只能看到 `dramaclaw-gateway` 生成的
+公共任务 ID 与供应商任务 ID 必须分开保存，客户端只能看到 `dramafoundry-gateway` 生成的
 `task_*` ID。
 
 同步音频适配继续实现 `channel.Adaptor.ConvertAudioRequest` 和 `DoResponse`。公共层只
