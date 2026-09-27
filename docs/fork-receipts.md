@@ -153,9 +153,13 @@ billed on our own gateway wallet. No DramaClaw endpoint involved.
 $ curl -X POST $B/projects/$PID/episodes/1/identities/plan -d '{}'
 {"ok":true,"task_type":"identity_planner","task_id":"29635ad2-94d0-4ada-b732-3785534b3a5b",
  "data":{"target_episode":1}}
--> running (multi-round LLM: cast planner, analysis planner, appearance writer; 8 chat
-   completions through the gateway within the first minute)
+-> completed after 20 chat/completions through the gateway (cast planner,
+   analysis planner, appearance writer rounds, all fornace-fast)
 ```
+
+Identity data written by the planner (spot check, 陈默_青年时期):
+appearance_details: 深炭灰色羊毛长风衣，衣摆带雨水不均... (rich Chinese appearance
+prompt, LLM-authored on our stack). face_prompt empty until portrait flow runs.
 
 Precondition enforcement verified earlier: script/generate before identity planning returns
 `{"ok":false,"code":"identity_plan_required","error":"第 1 集尚未规划角色身份，请先规划身份"}`
@@ -174,6 +178,25 @@ build_episodes | completed
 build_characters | completed
 identity_planner | running
 ```
+
+### 3.8 Image lane (bonus proof: portrait through fornace-image)
+
+```
+$ curl -X POST $B/projects/$PID/characters/陈默/portrait -d '{}'
+{"ok":true,"data":{"portrait_url":"/static/projects/01M3H2E94KAQGTCQ601SVZ4QQ6/assets/characters/%E9%99%88%E9%BB%98/portrait.png?v=1790501068873422202"}}
+
+Gateway log: POST /v1/images/generations 200 46.1s, channel_id=2, model_name="fornace-image",
+openai_image conversion, billed on our wallet.
+
+$ curl $STATIC/portrait.png -> 200, 2333138 bytes, PNG 1024x1536 (served from local static)
+```
+
+### 3.9 Lanes not exercised in this run
+
+- Video generation (fal h3-max / kling-3-pro / wan-3 task families) and TTS (index-tts-2)
+  route through the same gateway task plumbing; not fired in this control-plane smoke run.
+- Media relay data_uri provider: implemented and importable; exercised only implicitly
+  (portrait is text-to-image, no reference upload needed).
 
 ## 4. What is self-hosted vs external
 
